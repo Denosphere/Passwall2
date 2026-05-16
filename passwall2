@@ -1,0 +1,122 @@
+
+config shunt_rules 'Torrent'
+	option remarks 'Torrent'
+	option protocol 'bittorrent'
+	option network 'tcp,udp'
+	option inbound 'tproxy'
+	option port '0-65535'
+
+config shunt_rules 'ProxySites'
+	option remarks 'Proxy Sites'
+	option network 'tcp,udp'
+	option port '0-65535'
+	option protocol 'http tls quic'
+	option inbound 'tproxy'
+	option domain_list 'geosite:google-play
+geosite:github
+geosite:twitch-ads
+geosite:youtube
+geosite:telegram'
+
+config shunt_rules 'DirectSites'
+	option remarks 'Direct Sites'
+	option network 'tcp,udp'
+	option domain_list 'geosite:private
+geosite:category-ru
+geosite:whitelist
+geosite:microsoft
+geosite:apple
+geosite:epicgames
+geosite:riot
+geosite:escapefromtarkov
+geosite:steam
+geosite:twitch
+geosite:pinterest
+geosite:faceit'
+	option protocol 'http tls quic'
+	option inbound 'tproxy'
+
+config shunt_rules 'DirectIp'
+	option remarks 'Direct Ip'
+	option network 'tcp,udp'
+	option ip_list 'geoip:private
+geoip:direct
+'
+	option protocol 'http tls quic'
+	option inbound 'tproxy'
+
+config global
+	option enabled '0'
+	option node_socks_port '1070'
+	option localhost_proxy '1'
+	option client_proxy '1'
+	option socks_enabled '0'
+	option acl_enable '0'
+	option node 'rulenode'
+	option direct_dns_protocol 'auto'
+	option direct_dns_query_strategy 'UseIP'
+	option remote_dns_protocol 'tcp'
+	option remote_dns '1.1.1.1'
+	option remote_dns_query_strategy 'UseIPv4'
+	option dns_hosts 'cloudflare-dns.com 1.1.1.1
+dns.google.com 8.8.8.8'
+	option log_node '1'
+	option loglevel 'error'
+	
+config global_haproxy
+	option balancing_enable '0'
+
+config global_delay
+	option start_daemon '1'
+	option start_delay '60'
+
+config global_forwarding
+	option tcp_no_redir_ports 'disable'
+	option udp_no_redir_ports 'disable'
+	option tcp_redir_ports '1:65535'
+	option udp_redir_ports '1:65535'
+	option accept_icmp '0'
+	option prefer_nft '1'
+	option tcp_proxy_way 'redirect'
+	option ipv6_tproxy '0'
+
+config global_xray
+	option sniffing_override_dest '0'
+
+config global_other
+	option auto_detection_time 'tcping'
+	option show_node_info '0'
+
+config global_rules
+	option auto_update '1'
+	option geosite_update '1'
+	option geoip_update '1'
+	option v2ray_location_asset '/usr/share/v2ray/'
+	option geoip_url 'https://github.com/hydraponique/roscomvpn-geoip/releases/latest/download/geoip.dat'
+	option geosite_url 'https://github.com/hydraponique/roscomvpn-geosite/releases/latest/download/geosite.dat'
+	option week_update '7'
+	option time_update '0'
+
+config global_app
+	option geoview_file '/usr/bin/geoview'
+	option xray_file '/usr/bin/xray'
+	option hysteria_file '/usr/bin/hysteria'
+	option sing_box_file '/usr/bin/sing-box'
+
+config global_subscribe
+	option filter_keyword_mode '1'
+	
+config global_singbox
+
+config nodes 'Routing'
+	option type 'Xray'
+	option protocol '_shunt'
+	option remarks 'Маршрутизация'
+	option domainStrategy 'IPIfNonMatch'
+	option domainMatcher 'hybrid'
+	option write_ipset_direct '1'
+	option enable_geoview_ip '1'
+	option ProxySites '_default'
+	option DirectSites '_direct'
+	option DirectIp '_direct'
+	option default_node '_direct'
