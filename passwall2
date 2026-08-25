@@ -96,6 +96,8 @@ config global_rules
 	option geosite_url 'https://github.com/hydraponique/roscomvpn-geosite/releases/latest/download/geosite.dat'
 	option week_update '7'
 	option time_update '0'
+	option update_week_mode '7'
+	option update_time_mode '0:00'
 
 config global_app
 	option geoview_file '/usr/bin/geoview'
