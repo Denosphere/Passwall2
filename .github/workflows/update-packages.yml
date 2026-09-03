@@ -1,0 +1,53 @@
+name: Обновление пакетов
+
+# Запускается только вручную: кнопкой "Run workflow" на вкладке Actions
+# или командой с любой машины, где есть gh CLI:
+#   gh workflow run update-packages.yml -R Denosphere/Passwall2
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Релиз апстрима (пусто - последний)"
+        required: false
+        default: ""
+      arch:
+        description: "Архитектура пакетов"
+        required: false
+        default: "aarch64_cortex-a53"
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Обновить пакеты
+        id: update
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+          ARCH: ${{ inputs.arch }}
+        run: |
+          if [ -n "$TAG" ]; then
+            ./update-packages.sh --arch "$ARCH" --tag "$TAG"
+          else
+            ./update-packages.sh --arch "$ARCH"
+          fi
+
+      - name: Закоммитить в main
+        env:
+          UPSTREAM_TAG: ${{ steps.update.outputs.tag }}
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "Пакеты уже актуальны, коммитить нечего."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Обновление пакетов до $UPSTREAM_TAG"
+          git push
+          echo "Обновлено до $UPSTREAM_TAG и отправлено в main."
