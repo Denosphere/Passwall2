@@ -52,7 +52,7 @@ config global
 	option client_proxy '1'
 	option socks_enabled '0'
 	option acl_enable '0'
-	option node 'rulenode'
+	option node 'Routing'
 	option direct_dns_protocol 'auto'
 	option direct_dns_query_strategy 'UseIP'
 	option remote_dns_protocol 'tcp'
@@ -88,14 +88,11 @@ config global_other
 	option show_node_info '0'
 
 config global_rules
-	option auto_update '1'
 	option geosite_update '1'
 	option geoip_update '1'
 	option v2ray_location_asset '/usr/share/v2ray/'
 	option geoip_url 'https://github.com/hydraponique/roscomvpn-geoip/releases/latest/download/geoip.dat'
 	option geosite_url 'https://github.com/hydraponique/roscomvpn-geosite/releases/latest/download/geosite.dat'
-	option week_update '7'
-	option time_update '0'
 	option update_week_mode '7'
 	option update_time_mode '0:00'
 
