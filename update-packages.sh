@@ -117,13 +117,19 @@ take "$WORK" "luci-app-passwall2_*_all.ipk" "luci-app-passwall2" \
 take "$WORK" "luci-i18n-passwall2-ru_*_all.ipk" "luci-i18n-passwall2-ru" \
   || { echo "ОШИБКА: русская локализация в релизе $TAG не найдена"; exit 1; }
 
-ZIP="passwall_packages_ipk_${ARCH}.zip"
+# Архив называется passwall_packages_ipk_<arch>.zip до 26.9.9-2 и
+# packages_ipk_<arch>.zip начиная с 26.9.12-2. Маска ловит оба варианта,
+# чтобы --tag работал и со старыми релизами.
+ZIP_MASK="*packages_ipk_${ARCH}.zip"
 echo
-echo "=== качаю $ZIP ==="
-gh release download "$TAG" -R "$REPO" -D "$WORK" -p "$ZIP" --clobber
+echo "=== качаю $ZIP_MASK ==="
+gh release download "$TAG" -R "$REPO" -D "$WORK" -p "$ZIP_MASK" --clobber \
+  || { echo "ОШИБКА: архива пакетов под $ARCH в релизе $TAG нет (--list покажет ассеты)"; exit 1; }
+ZIP=$(find "$WORK" -maxdepth 1 -type f -name "$ZIP_MASK" | head -1)
+echo "  $(basename "$ZIP")"
 
 echo "=== распаковываю ==="
-unzip -q -o "$WORK/$ZIP" -d "$WORK/unpacked"
+unzip -q -o "$ZIP" -d "$WORK/unpacked"
 
 echo "=== достаю пакеты из архива ==="
 for pkg in $FROM_ZIP; do
